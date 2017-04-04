@@ -1,7 +1,7 @@
 //! This example is a port of the example found in libao's documentation:
 //! https://www.xiph.org/ao/doc/ao_example.c
 
-extern crate ao;
+extern crate ao_rs as ao;
 
 use ao::*;
 use std::f32::consts::PI;
