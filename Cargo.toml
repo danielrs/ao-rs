@@ -1,5 +1,5 @@
 [package]
-name = "ao_rs"
+name = "ao-rs"
 version = "0.1.0"
 authors = ["Daniel Rivas <ers.daniel+dev@gmail.com>"]
 
