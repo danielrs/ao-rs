@@ -3,5 +3,14 @@ name = "ao"
 version = "0.1.0"
 authors = ["Daniel Rivas <ers.daniel+dev@gmail.com>"]
 
+description = "libao bindings for Rust"
+
+homepage = "https://github.com/danielrs/ao-rs"
+documentation = "https://github.com/danielrs/ao-rs"
+repository = "https://github.com/danielrs/ao-rs"
+
+license = "GPL-3.0"
+license-file = "./LICENSE"
+
 [dependencies]
 libc = "0.2"
