@@ -10,7 +10,7 @@ use error::Error;
 use std::ffi::CString;
 use std::ptr;
 use std::ptr::Unique;
-use libc::{c_int};
+use libc::c_int;
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
 /// type is created, and that initialization is done in the main thread.
@@ -18,7 +18,9 @@ pub struct Ao;
 impl Ao {
     /// Initializes libao.
     pub fn new() -> Self {
-        unsafe { ffi::ao_initialize(); }
+        unsafe {
+            ffi::ao_initialize();
+        }
         Ao
     }
 
@@ -33,7 +35,9 @@ impl Ao {
 
 impl Drop for Ao {
     fn drop(&mut self) {
-        unsafe { ffi::ao_shutdown(); }
+        unsafe {
+            ffi::ao_shutdown();
+        }
     }
 }
 
@@ -48,8 +52,7 @@ impl Driver {
         let driver_id = unsafe { ffi::ao_default_driver_id() };
         if driver_id >= 0 {
             Ok(Driver { driver_id: driver_id })
-        }
-        else {
+        } else {
             Err(Error::from_errno())
         }
     }
@@ -63,8 +66,7 @@ impl Driver {
         let driver_id = unsafe { ffi::ao_driver_id(short_name.as_ptr()) };
         if driver_id >= 0 {
             Ok(Driver { driver_id: driver_id })
-        }
-        else {
+        } else {
             Err(Error::from_errno())
         }
     }
@@ -82,23 +84,21 @@ pub struct Device {
 
 impl Device {
     /// Creates a new device using the given driver, format, and settings.
-    pub fn new(driver: &Driver, format: &Format, settings: Option<&Settings>)
-        -> Result<Self, Error> {
+    pub fn new(driver: &Driver,
+               format: &Format,
+               settings: Option<&Settings>)
+               -> Result<Self, Error> {
         let options = match settings {
             Some(settings) => settings.as_ao_option(),
             None => ptr::null(),
         };
-        let ao_device = unsafe {
-            ffi::ao_open_live(driver.driver_id(), &format.to_ao_format(), options)
-        };
+        let ao_device =
+            unsafe { ffi::ao_open_live(driver.driver_id(), &format.to_ao_format(), options) };
 
         if ao_device.is_null() {
             Err(Error::from_errno())
-        }
-        else {
-            unsafe {
-                Ok(Device { device: Unique::new(ao_device) })
-            }
+        } else {
+            unsafe { Ok(Device { device: Unique::new(ao_device) }) }
         }
     }
 
@@ -128,9 +128,7 @@ pub struct Settings {
 impl Settings {
     /// Creates empty settings.
     pub fn new() -> Self {
-        Settings {
-            options: ptr::null_mut(),
-        }
+        Settings { options: ptr::null_mut() }
     }
 
     /// Appends a new setting to the list.
