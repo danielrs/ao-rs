@@ -1,3 +1,5 @@
+#![feature(unique)]
+
 extern crate libc;
 
 pub mod error;
@@ -7,6 +9,7 @@ use error::Error;
 
 use std::ffi::CString;
 use std::ptr;
+use std::ptr::Unique;
 use libc::{c_int};
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
@@ -74,7 +77,7 @@ impl Driver {
 
 /// Ao device.
 pub struct Device {
-    device: *mut ffi::AoDevice,
+    device: Unique<ffi::AoDevice>,
 }
 
 impl Device {
@@ -93,14 +96,16 @@ impl Device {
             Err(Error::from_errno())
         }
         else {
-            Ok(Device { device: ao_device })
+            unsafe {
+                Ok(Device { device: Unique::new(ao_device) })
+            }
         }
     }
 
     /// Plays the given PCM data using the specified format.
     pub fn play(&self, buffer: &[i8]) {
         unsafe {
-            ffi::ao_play(self.device, buffer.as_ptr(), buffer.len() as u32);
+            ffi::ao_play(*self.device, buffer.as_ptr(), buffer.len() as u32);
         }
     }
 }
@@ -109,7 +114,7 @@ impl Drop for Device {
     fn drop(&mut self) {
         unsafe {
             if !self.device.is_null() {
-                ffi::ao_close(self.device);
+                ffi::ao_close(*self.device);
             }
         }
     }

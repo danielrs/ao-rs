@@ -5,7 +5,7 @@
 use libc::{c_int, c_char, uint32_t};
 
 /// Opaque structure for libao's ao_device.
-#[derive(Copy, Clone, Debug)]
+#[derive(Debug)]
 pub enum AoDevice {}
 
 /// Structure for libao's ao_sample_format.
