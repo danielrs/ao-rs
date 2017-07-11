@@ -105,7 +105,7 @@ impl Device {
     /// Plays the given PCM data using the specified format.
     pub fn play(&self, buffer: &[i8]) {
         unsafe {
-            ffi::ao_play(*self.device, buffer.as_ptr(), buffer.len() as u32);
+            ffi::ao_play(self.device.as_ref(), buffer.as_ptr(), buffer.len() as u32);
         }
     }
 }
@@ -113,8 +113,8 @@ impl Device {
 impl Drop for Device {
     fn drop(&mut self) {
         unsafe {
-            if !self.device.is_null() {
-                ffi::ao_close(*self.device);
+            if !self.device.as_ptr().is_null() {
+                ffi::ao_close(self.device.as_mut());
             }
         }
     }

@@ -1,6 +1,6 @@
 [package]
 name = "ao_rs"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Daniel Rivas <ers.daniel+dev@gmail.com>"]
 
 description = "libao bindings for Rust"
