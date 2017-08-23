@@ -9,7 +9,6 @@ homepage = "https://github.com/danielrs/ao-rs"
 documentation = "https://github.com/danielrs/ao-rs"
 repository = "https://github.com/danielrs/ao-rs"
 
-license = "GPL-3.0"
 license-file = "./LICENSE"
 
 [dependencies]
