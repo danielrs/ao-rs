@@ -95,11 +95,15 @@ impl Device {
         let ao_device =
             unsafe { ffi::ao_open_live(driver.driver_id(), &format.to_ao_format(), options) };
 
-        if ao_device.is_null() {
-            Err(Error::from_errno())
-        } else {
-            unsafe { Ok(Device { device: Unique::new(ao_device) }) }
-        }
+        // unique new does a null-ptr check now
+        let ao_device = match Unique::new(ao_device) {
+            Some(udev) => udev,
+            None => {
+                return Err(Error::from_errno())
+            }
+        };
+
+        Ok(Device { device: ao_device })
     }
 
     /// Plays the given PCM data using the specified format.
