@@ -9,7 +9,7 @@ use error::Error;
 
 use std::ffi::CString;
 use std::ptr;
-use std::ptr::Unique;
+use std::ptr::NonNull;
 use libc::c_int;
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
@@ -79,7 +79,7 @@ impl Driver {
 
 /// Ao device.
 pub struct Device {
-    device: Unique<ffi::AoDevice>,
+    device: NonNull<ffi::AoDevice>,
 }
 
 impl Device {
@@ -96,7 +96,7 @@ impl Device {
             unsafe { ffi::ao_open_live(driver.driver_id(), &format.to_ao_format(), options) };
 
         // unique new does a null-ptr check now
-        let ao_device = match Unique::new(ao_device) {
+        let ao_device = match NonNull::new(ao_device) {
             Some(udev) => udev,
             None => {
                 return Err(Error::from_errno())
