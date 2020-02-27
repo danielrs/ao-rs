@@ -157,6 +157,12 @@ impl Settings {
     }
 }
 
+impl Default for Settings {
+    fn default() -> Self {
+        Settings::new()
+    }
+}
+
 impl Drop for Settings {
     fn drop(&mut self) {
         unsafe {
@@ -184,10 +190,10 @@ impl Format {
     /// Returns a new AoFormat without consuming self.
     pub fn to_ao_format(&self) -> ffi::AoFormat {
         ffi::AoFormat {
-            bits: self.bits.clone() as c_int,
-            rate: self.rate.clone() as c_int,
-            channels: self.channels.clone() as c_int,
-            byte_format: self.byte_format.clone() as c_int,
+            bits: self.bits as c_int,
+            rate: self.rate as c_int,
+            channels: self.channels as c_int,
+            byte_format: self.byte_format as c_int,
             matrix: ptr::null_mut(),
         }
     }

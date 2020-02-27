@@ -11,5 +11,7 @@ repository = "https://github.com/danielrs/ao-rs"
 
 license-file = "./LICENSE"
 
+edition = "2018"
+
 [dependencies]
 libc = "0.2"
