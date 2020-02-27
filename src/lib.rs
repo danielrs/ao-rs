@@ -14,6 +14,8 @@ use libc::c_int;
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
 /// type is created, and that initialization is done in the main thread.
+
+#[derive(Default)]
 pub struct Ao;
 impl Ao {
     /// Initializes libao.
@@ -51,7 +53,7 @@ impl Driver {
     pub fn new() -> Result<Self, Error> {
         let driver_id = unsafe { ffi::ao_default_driver_id() };
         if driver_id >= 0 {
-            Ok(Driver { driver_id: driver_id })
+            Ok(Driver { driver_id })
         } else {
             Err(Error::from_errno())
         }
@@ -65,7 +67,7 @@ impl Driver {
         let short_name = CString::new(short_name).unwrap();
         let driver_id = unsafe { ffi::ao_driver_id(short_name.as_ptr()) };
         if driver_id >= 0 {
-            Ok(Driver { driver_id: driver_id })
+            Ok(Driver { driver_id })
         } else {
             Err(Error::from_errno())
         }
