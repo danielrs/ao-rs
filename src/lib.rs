@@ -7,10 +7,10 @@ mod ffi;
 
 use error::Error;
 
+use libc::c_int;
 use std::ffi::CString;
 use std::ptr;
 use std::ptr::NonNull;
-use libc::c_int;
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
 /// type is created, and that initialization is done in the main thread.
@@ -86,10 +86,11 @@ pub struct Device {
 
 impl Device {
     /// Creates a new device using the given driver, format, and settings.
-    pub fn new(driver: &Driver,
-               format: &Format,
-               settings: Option<&Settings>)
-               -> Result<Self, Error> {
+    pub fn new(
+        driver: &Driver,
+        format: &Format,
+        settings: Option<&Settings>,
+    ) -> Result<Self, Error> {
         let options = match settings {
             Some(settings) => settings.as_ao_option(),
             None => ptr::null(),
@@ -100,9 +101,7 @@ impl Device {
         // unique new does a null-ptr check now
         let ao_device = match NonNull::new(ao_device) {
             Some(udev) => udev,
-            None => {
-                return Err(Error::from_errno())
-            }
+            None => return Err(Error::from_errno()),
         };
 
         Ok(Device { device: ao_device })
@@ -134,7 +133,9 @@ pub struct Settings {
 impl Settings {
     /// Creates empty settings.
     pub fn new() -> Self {
-        Settings { options: ptr::null_mut() }
+        Settings {
+            options: ptr::null_mut(),
+        }
     }
 
     /// Appends a new setting to the list.
