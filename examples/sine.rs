@@ -7,7 +7,7 @@ use ao::*;
 use std::f32::consts::PI;
 
 fn main() {
-    let ao = Ao::new();
+    let _ao = Ao::new();
     let driver = Driver::new().unwrap();
     let format = Format::new();
     let device = Device::new(&driver, &format, None).unwrap();

@@ -2,7 +2,7 @@
 //! [official docs](https://www.xiph.org/ao/doc/) for more
 //! information.
 
-use libc::{c_int, c_char, uint32_t};
+use libc::{c_int, c_char};
 
 /// Opaque structure for libao's ao_device.
 #[derive(Debug)]
@@ -39,7 +39,7 @@ extern "C" {
                         -> *mut AoDevice;
     pub fn ao_play(ao_device: *const AoDevice,
                    output_samples: *const c_char,
-                   num_bytes: uint32_t)
+                   num_bytes: u32)
                    -> c_int;
     pub fn ao_close(ao_device: *mut AoDevice) -> c_int;
 
