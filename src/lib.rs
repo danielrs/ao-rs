@@ -1,4 +1,4 @@
-#![feature(unique)]
+// #![feature(unique)]
 
 extern crate libc;
 
@@ -7,13 +7,15 @@ mod ffi;
 
 use error::Error;
 
+use libc::c_int;
 use std::ffi::CString;
 use std::ptr;
 use std::ptr::NonNull;
-use libc::c_int;
 
 /// Opaque struct for Ao handling. Make sure only one instance of this
 /// type is created, and that initialization is done in the main thread.
+
+#[derive(Default)]
 pub struct Ao;
 impl Ao {
     /// Initializes libao.
@@ -51,7 +53,7 @@ impl Driver {
     pub fn new() -> Result<Self, Error> {
         let driver_id = unsafe { ffi::ao_default_driver_id() };
         if driver_id >= 0 {
-            Ok(Driver { driver_id: driver_id })
+            Ok(Driver { driver_id })
         } else {
             Err(Error::from_errno())
         }
@@ -65,7 +67,7 @@ impl Driver {
         let short_name = CString::new(short_name).unwrap();
         let driver_id = unsafe { ffi::ao_driver_id(short_name.as_ptr()) };
         if driver_id >= 0 {
-            Ok(Driver { driver_id: driver_id })
+            Ok(Driver { driver_id })
         } else {
             Err(Error::from_errno())
         }
@@ -84,10 +86,11 @@ pub struct Device {
 
 impl Device {
     /// Creates a new device using the given driver, format, and settings.
-    pub fn new(driver: &Driver,
-               format: &Format,
-               settings: Option<&Settings>)
-               -> Result<Self, Error> {
+    pub fn new(
+        driver: &Driver,
+        format: &Format,
+        settings: Option<&Settings>,
+    ) -> Result<Self, Error> {
         let options = match settings {
             Some(settings) => settings.as_ao_option(),
             None => ptr::null(),
@@ -98,9 +101,7 @@ impl Device {
         // unique new does a null-ptr check now
         let ao_device = match NonNull::new(ao_device) {
             Some(udev) => udev,
-            None => {
-                return Err(Error::from_errno())
-            }
+            None => return Err(Error::from_errno()),
         };
 
         Ok(Device { device: ao_device })
@@ -132,7 +133,9 @@ pub struct Settings {
 impl Settings {
     /// Creates empty settings.
     pub fn new() -> Self {
-        Settings { options: ptr::null_mut() }
+        Settings {
+            options: ptr::null_mut(),
+        }
     }
 
     /// Appends a new setting to the list.
@@ -151,6 +154,12 @@ impl Settings {
     /// Returns the contained AoOption pointer.
     pub fn as_ao_option(&self) -> *const ffi::AoOption {
         self.options
+    }
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Settings::new()
     }
 }
 
@@ -181,10 +190,10 @@ impl Format {
     /// Returns a new AoFormat without consuming self.
     pub fn to_ao_format(&self) -> ffi::AoFormat {
         ffi::AoFormat {
-            bits: self.bits.clone() as c_int,
-            rate: self.rate.clone() as c_int,
-            channels: self.channels.clone() as c_int,
-            byte_format: self.byte_format.clone() as c_int,
+            bits: self.bits as c_int,
+            rate: self.rate as c_int,
+            channels: self.channels as c_int,
+            byte_format: self.byte_format as c_int,
             matrix: ptr::null_mut(),
         }
     }
